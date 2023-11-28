@@ -33,7 +33,6 @@ def encode(image,delta,debug=False):
     hPadding=numberOfBlocksInHeight*8-height
     wPadding=numberOfBlocksInWidth*8-width
     dictionary,firstMeanValue=generateDictionaryFromBlocks(transformedBlocksList)
-    print(dictionary)
     encodedImageStr+=header.generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue,debug)
     for currentBlock in transformedBlocksList:
         encodedImageStr+=splitter

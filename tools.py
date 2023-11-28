@@ -21,7 +21,7 @@ def bin2int(str):
 
 
 def pointedVariable(value,sizeOfPointer,offset=0):
-    strVal=int2bin(value)
+    strVal=int2bin(value,offset)
     strSize=int2bin(len(strVal)-offset,sizeOfPointer)
     if (strSize!=ERROR):
         return(strSize+strVal)

@@ -27,18 +27,21 @@ import tools
 
 
 im = cv2.imread("images/01.png",0)
+
 height, width = im.shape[:2]
 
 encoded=compressor.encode(im,1)
+encodedDebug=compressor.encode(im,1,True)
 encodedImage=[encoded[0]]
+encodedImageDebug=[encodedDebug[0]]
 lengthOfLine=50
 print(8*height*width/len(encodedImage[0]))
 
 
-
-# with open("./encodedImage.txt", "w") as f:
-#     for i in range(len(encodedImage[0])//lengthOfLine):
-#         f.write(tools.popString(encodedImage,lengthOfLine))
-#         f.write('\n')
+if(True):
+    with open("./encodedImage.txt", "w") as f:
+        for i in range(len(encodedImageDebug[0])//lengthOfLine):
+            f.write(tools.popString(encodedImageDebug,lengthOfLine))
+            f.write('\n')
 
 print(compressor.decode(encodedImage))
