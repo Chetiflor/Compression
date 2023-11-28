@@ -1,3 +1,5 @@
+import math
+
 ERROR = "__ERROR__"
 
 def int2bin(n,length=0,offset=0):

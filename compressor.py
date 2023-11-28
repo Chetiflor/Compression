@@ -28,13 +28,15 @@ def encode(image,delta,debug=False):
         splitter="_"
 
     encodedImageStr=""
-    height,width=image.shape[:2]
-    transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth=dct.dctOnImage(image,delta)
+    height,width=image.shape[:2]    
+    deltaScaled= round((delta-1)*header.deltaRangeSize+2**(header.deltaRangeSize-1))
+    delta=1+(deltaScaled-2**(header.deltaRangeSize-1))/header.deltaRangeSize
+
+    transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth=dct.dctBlocksFromImage(image,delta)
     hPadding=numberOfBlocksInHeight*8-height
     wPadding=numberOfBlocksInWidth*8-width
     dictionary,firstMeanValue=generateDictionaryAndComputeError(transformedBlocksList)
-    encodedImageStr+=header.generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue,debug)
-    currentMeanValue=firstMeanValue
+    encodedImageStr+=header.generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,deltaScaled,dictionary,firstMeanValue,debug)
     for currentBlock in transformedBlocksList:
         encodedImageStr+=splitter
         encodedImageStr+=block.encode(currentBlock,dictionary)
@@ -46,7 +48,8 @@ def decode(wrappedEncodedImageStr):
     while(wrappedEncodedImageStr[0]!=""):
         meanValue,currentBlock=block.decode(wrappedEncodedImageStr,meanValue,dictionary)
         receivedBlocksList.append(currentBlock)
-    return(receivedBlocksList)
+    image=dct.dctBlocksToImage(receivedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta)
+    return(image)
 
 
 

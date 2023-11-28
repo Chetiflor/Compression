@@ -30,9 +30,12 @@ im = cv2.imread("images/01.png",0)
 
 height, width = im.shape[:2]
 
-encoded=compressor.encode(im,1)
-encodedDebug=compressor.encode(im,1,True)
+delta=0.1
+
+encoded=compressor.encode(im,delta)
+encodedDebug=compressor.encode(im,delta)
 encodedImage=[encoded[0]]
+encodedImageToFile=encodedImage.copy()
 encodedImageDebug=[encodedDebug[0]]
 lengthOfLine=50
 print(8*height*width/len(encodedImage[0]))
@@ -40,9 +43,16 @@ print(8*height*width/len(encodedImage[0]))
 
 if(True):
     with open("./encodedImage.txt", "w") as f:
-        for i in range(len(encodedImageDebug[0])//lengthOfLine):
-            f.write(tools.popString(encodedImageDebug,lengthOfLine))
+        for i in range(len(encodedImageToFile[0])//lengthOfLine):
+            f.write(tools.popString(encodedImageToFile,lengthOfLine))
             f.write('\n')
-        f.write(encodedImageDebug[0])
+        f.write(encodedImageToFile[0])
 
-print(compressor.decode(encodedImage))
+imp1=im+1
+
+transformedImage = compressor.decode(encodedImage)
+err = (np.square(np.subtract(im.astype("float"), imp1.astype("float")))).mean()/(width*height)
+print(err)
+cv2.imshow("compression",transformedImage)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

@@ -13,10 +13,10 @@ Z=np.array([[16,11,10,16,24,40,51,61],
 ])
 
 def dct(block,delta):
-    return np.trunc(np.divide(cv2.dct((block)),(1/delta)*Z))
+    return np.trunc(np.divide(cv2.dct((block)),1.0*delta*Z))
 
 def idct(block,delta):
-    idctValues = cv2.idct(np.multiply(block,(1/delta)*Z))
+    idctValues = cv2.idct(np.multiply(block,1.0*delta*Z))
     idctValues[idctValues<0]=0
     return(idctValues)
 
@@ -46,28 +46,29 @@ def split(image):
             blocksList.append(currentBlock)
     return(blocksList, numberOfBlocksInHeight,numberOfBlocksInWidth)
 
-def fuseBlocksIntoImage(blocksList,numberOfBlocksInHeight,numberOfBlocksInWidth):
-    
-    image = np.zeros((numberOfBlocksInHeight*8,numberOfBlocksInWidth*8,1), np.uint8)
+def fuseBlocksIntoImage(blocksList,numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding):
+    heigth=numberOfBlocksInHeight*8
+    width=numberOfBlocksInWidth*8
+    image = np.zeros((heigth,width,1), np.uint8)
     for i in range(numberOfBlocksInHeight):
         for j in range(numberOfBlocksInWidth):
             for ki in range(8):
                 for kj in range(8):
                     image[i*8+ki,j*8+kj]=blocksList[i*numberOfBlocksInWidth+j][ki,kj]
-    return image
+    return image[:heigth-hPadding,:width-wPadding]
 
-def dctOnImage(image,delta):
+def dctBlocksFromImage(image,delta):
     blocksList,numberOfBlocksInHeight,numberOfBlocksInWidth = split(image)
     transformedBlocksList=[]
     for i in range(len(blocksList)):
         transformedBlocksList.append(list(dct(blocksList[i].astype(np.float32),delta).astype(int)))
     return (transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth)
 
-def idctOnBlocks(transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth,delta):
+def dctBlocksToImage(transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta):
     imageBlocksList=[]
     for i in range(len(transformedBlocksList)):
         imageBlocksList.append(idct(transformedBlocksList[i],delta))
-    return fuseBlocksIntoImage(imageBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth)
+    return fuseBlocksIntoImage(imageBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding)
 
 
 
