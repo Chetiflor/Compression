@@ -43,5 +43,6 @@ if(True):
         for i in range(len(encodedImageDebug[0])//lengthOfLine):
             f.write(tools.popString(encodedImageDebug,lengthOfLine))
             f.write('\n')
+        f.write(encodedImageDebug[0])
 
 print(compressor.decode(encodedImage))

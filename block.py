@@ -5,8 +5,9 @@ import runlength
 sizeOfRunlengthQuantifier=3
 
 def generateStartingHuffmanMarker(numberOfValues):
-    marker=tools.pointedVariable(numberOfValues,2,3)
-    return(marker)
+    marker=[tools.pointedVariable(numberOfValues,2,3)]
+    tools.fillWithZeros(marker,5)
+    return(marker[0])
 
 def readNumberOfValuesFromHuffmanMarker(wrappedMarker):
     sizeOfNumberOfValues=tools.popInt(wrappedMarker,2)+3

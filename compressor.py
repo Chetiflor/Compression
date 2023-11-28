@@ -3,14 +3,14 @@ import block
 import header
 import dct
 
-def generateDictionaryFromBlocks(dctBlocksList):
+def generateDictionaryAndComputeError(dctBlocksList):
     firstMeanValue=dctBlocksList[0][0][0]
     currentMeanValue=firstMeanValue
     error=0
     occurencesOfValues={}
     for currentBlock in dctBlocksList:
         error=currentBlock[0][0]-currentMeanValue
-        currentMeanValue+=error
+        currentMeanValue=currentBlock[0][0]
         currentBlock[0][0]=error
         for line in currentBlock:
             for value in line:
@@ -32,21 +32,19 @@ def encode(image,delta,debug=False):
     transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth=dct.dctOnImage(image,delta)
     hPadding=numberOfBlocksInHeight*8-height
     wPadding=numberOfBlocksInWidth*8-width
-    dictionary,firstMeanValue=generateDictionaryFromBlocks(transformedBlocksList)
+    dictionary,firstMeanValue=generateDictionaryAndComputeError(transformedBlocksList)
     encodedImageStr+=header.generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue,debug)
+    currentMeanValue=firstMeanValue
     for currentBlock in transformedBlocksList:
         encodedImageStr+=splitter
         encodedImageStr+=block.encode(currentBlock,dictionary)
     return encodedImageStr,transformedBlocksList
 
 def decode(wrappedEncodedImageStr):
-    numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue=header.readHeader(wrappedEncodedImageStr)
-    meanValue=firstMeanValue
+    numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,meanValue=header.readHeader(wrappedEncodedImageStr)
     receivedBlocksList=[]
     while(wrappedEncodedImageStr[0]!=""):
-        error,currentBlock=block.decode(wrappedEncodedImageStr,meanValue,dictionary)
-        meanValue+=error
-        currentBlock[0][0]=meanValue
+        meanValue,currentBlock=block.decode(wrappedEncodedImageStr,meanValue,dictionary)
         receivedBlocksList.append(currentBlock)
     return(receivedBlocksList)
 

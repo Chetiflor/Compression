@@ -28,6 +28,7 @@ def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPaddin
         symbols.append(y)
 
     minSymbols = min(symbols)
+    maxSymbolsTranslated = max(symbols)-minSymbols
     
     if minSymbols<0:
         header+="1"
@@ -35,12 +36,11 @@ def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPaddin
         header+="0"
     header+=splitter
 
-    header+=tools.pointedVariable(minSymbols,4)
+    header+=tools.pointedVariable(abs(minSymbols),4)
     header+=splitter
 
 
     
-    maxSymbolsTranslated = max(symbols)-minSymbols
     sizeOfSymbols=len(tools.int2bin(maxSymbolsTranslated))
     header+=tools.pointedVariable(sizeOfSymbols,4)
     header+=splitter
@@ -83,7 +83,8 @@ def readHeader(wrappedStr):
     print(sizeOfSymbols,sizeOfSizesOfCode)
     dictionary={}
     for i in range(N):
-        symbol=tools.popInt(wrappedStr,sizeOfSymbols)+minSymbols
+        symbol=tools.popInt(wrappedStr,sizeOfSymbols)
+        symbol+=minSymbols
         code=tools.popPointedString(wrappedStr,sizeOfSizesOfCode)
         dictionary[code]=symbol
     firstMeanValue=tools.popPointedInt(wrappedStr,4)

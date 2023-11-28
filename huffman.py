@@ -50,7 +50,7 @@ def encode(listOfSymbols,dictionary):
         if symbol in dictionary.values():
             codeStr+=list(dictionary.keys())[list(dictionary.values()).index(symbol)]
         else:
-            codeStr+=tools.ERROR
+            codeStr+="__HUFFEN__"
     return codeStr
 
 def decode(wrappedStr,dictionary,numberOfSymbols):
@@ -58,12 +58,12 @@ def decode(wrappedStr,dictionary,numberOfSymbols):
     maxSizeOfCode=len(max(dictionary.keys(), key=len))
     for i in range(numberOfSymbols):
         if (len(wrappedStr[0])==0):
-            return([tools.ERROR])
+            return(["__HUFFDE__"])
         k=1
         while (k<=maxSizeOfCode and not(wrappedStr[0][:k] in dictionary)):
             k+=1
         if k>maxSizeOfCode:
-            decodedList.append(tools.ERROR)
+            decodedList.append("__HUFFDE__")
         else:
             key=tools.popString(wrappedStr,k)
             decodedList.append(dictionary[key])
