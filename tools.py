@@ -2,7 +2,7 @@ ERROR = "error"
 
 def int2bin(n,length=0):
     s=""
-    while (n!=0):
+    while (n>0):
         s=str(n%2)+s
         n=n//2
     if (length!=0 and len(s)>length):
@@ -20,9 +20,9 @@ def bin2int(str):
     return n
 
 
-def pointedVariable(value,sizeOfPointer):
+def pointedVariable(value,sizeOfPointer,offset=0):
     strVal=int2bin(value)
-    strSize=int2bin(len(strVal),sizeOfPointer)
+    strSize=int2bin(len(strVal)-offset,sizeOfPointer)
     if (strSize!=ERROR):
         return(strSize+strVal)
     return(ERROR)
@@ -67,6 +67,11 @@ def snake(heigth,width):
             indicesList.append([i,j*(1-2*rightToLeft)+rightToLeft*(width-1)])
         rightToLeft=not(rightToLeft)
     return(indicesList)
+
+def fillWithZeros(wrappedStr,expectedLength):
+    lengthDifference=expectedLength-len(wrappedStr[0])
+    if(lengthDifference>0):
+        wrappedStr+="0"*lengthDifference
 
 
     
