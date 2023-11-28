@@ -22,64 +22,55 @@ def idct(block,delta):
 
 
 def split(image):
-    blocks = []
+    blocksList = []
 
-    heigth, width = image.shape[:2]
+    height, width = image.shape[:2]
 
-    hPadding = heigth%8!=0 
+    hPadding = height%8!=0 
     wPadding = width%8!=0
 
-    numberOfBlocksInHeigth=heigth//8+hPadding
+    numberOfBlocksInHeight=height//8+hPadding
     numberOfBlocksInWidth=width//8+wPadding
  
-    for kh in range(numberOfBlocksInHeigth):
+    for kh in range(numberOfBlocksInHeight):
         for kw in range(numberOfBlocksInWidth):
             currentBlock = np.zeros((8,8,1), np.uint8)
             currentBlock[:,:] = 127
 
-            heigthRemainingOnEdge = 8 if kh!=numberOfBlocksInHeigth else heigth%8
+            heightRemainingOnEdge = 8 if kh!=numberOfBlocksInHeight else height%8
             widthRemainingOnEdge = 8 if kw!= numberOfBlocksInWidth else width%8
-            for i in range(heigthRemainingOnEdge):
+            for i in range(heightRemainingOnEdge):
                 for j in range(widthRemainingOnEdge):
                     currentBlock[i,j] = image[kh*8+i,kw*8+j]
 
-            blocks.append(currentBlock)
-    return(blocks, numberOfBlocksInHeigth,numberOfBlocksInWidth)
+            blocksList.append(currentBlock)
+    return(blocksList, numberOfBlocksInHeight,numberOfBlocksInWidth)
 
-def fuseBlocksIntoImage(blocks,numberOfBlocksInHeigth,numberOfBlocksInWidth):
+def fuseBlocksIntoImage(blocksList,numberOfBlocksInHeight,numberOfBlocksInWidth):
     
-    image = np.zeros((numberOfBlocksInHeigth*8,numberOfBlocksInWidth*8,1), np.uint8)
-    for i in range(numberOfBlocksInHeigth):
+    image = np.zeros((numberOfBlocksInHeight*8,numberOfBlocksInWidth*8,1), np.uint8)
+    for i in range(numberOfBlocksInHeight):
         for j in range(numberOfBlocksInWidth):
             for ki in range(8):
                 for kj in range(8):
-                    image[i*8+ki,j*8+kj]=blocks[i*numberOfBlocksInWidth+j][ki,kj]
+                    image[i*8+ki,j*8+kj]=blocksList[i*numberOfBlocksInWidth+j][ki,kj]
     return image
 
 def dctOnImage(image,delta):
-    blocks,numberOfBlocksInHeigth,numberOfBlocksInWidth = split(image)
-    transformedBlocks=[]
-    for i in range(len(blocks)):
-        transformedBlocks.append(dct(blocks[i].astype(np.float32),delta))
-    return (transformedBlocks,numberOfBlocksInHeigth,numberOfBlocksInWidth)
+    blocksList,numberOfBlocksInHeight,numberOfBlocksInWidth = split(image)
+    transformedBlocksList=[]
+    for i in range(len(blocksList)):
+        transformedBlocksList.append(list(dct(blocksList[i].astype(np.float32),delta).astype(int)))
+    return (transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth)
 
-def idctOnBlocks(transformedBlocks,numberOfBlocksInHeigth,numberOfBlocksInWidth,delta):
-    imageBlocks=[]
-    for i in range(len(transformedBlocks)):
-        imageBlocks.append(idct(transformedBlocks[i],delta))
-    return fuseBlocksIntoImage(imageBlocks,numberOfBlocksInHeigth,numberOfBlocksInWidth)
+def idctOnBlocks(transformedBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth,delta):
+    imageBlocksList=[]
+    for i in range(len(transformedBlocksList)):
+        imageBlocksList.append(idct(transformedBlocksList[i],delta))
+    return fuseBlocksIntoImage(imageBlocksList,numberOfBlocksInHeight,numberOfBlocksInWidth)
 
 
-# im = cv2.imread("images/01.png",0)
 
-# delta=1/8
-
-# blocks,heigth,width = dctOnImage(im,delta)
-# imreco=idctOnBlocks(blocks,heigth,width,delta)
-
-# plt.imshow(imreco,'gray')
-# plt.colorbar()
-# plt.show()
 
 
 

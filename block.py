@@ -12,10 +12,8 @@ def readNumberOfValuesFromHuffmanMarker(wrappedMarker):
     sizeOfNumberOfValues=tools.popInt(wrappedMarker,2)+3
     return(tools.popInt(wrappedMarker,sizeOfNumberOfValues))
 
-def encode(dct88Block,previousMeanValue,dictionary):
+def encode(dct88Block,dictionary):
     encodedBlock=""
-    currentMeanValue=dct88Block[0,0]
-    dct88Block[0,0]=currentMeanValue-previousMeanValue
     indicesRoute=tools.zigzag(8,8)
     runlengthToEncode=""
     valuesToEncode=[]
@@ -36,14 +34,15 @@ def decode(wrappedStr,previousMeanValue,dictionary):
     decodedValuesList=[[0 for i in range(8)] for j in range(8)]
     numberOfValues=readNumberOfValuesFromHuffmanMarker(wrappedStr)
     values=huffman.decode(wrappedStr,dictionary,numberOfValues)
-    values[0]+=previousMeanValue
-    valuesPositionsMask=runlength.decode(wrappedStr,sizeOfRunlengthQuantifier)
-    tools.fillWithZeros([valuesPositionsMask],64)
+    valuesPositionsMask=[runlength.decode(wrappedStr,sizeOfRunlengthQuantifier,numberOfValues)]
+    tools.fillWithZeros(valuesPositionsMask,64)
     indicesRoute=tools.zigzag(8,8)
     k=0
     for i in range(64):
-        if(valuesPositionsMask[i]=="1"):
-            decodedValuesList[indicesRoute[i]]=values[k]
+        if(valuesPositionsMask[0][i]=="1"):
+            [x,y]=indicesRoute[i]
+            decodedValuesList[x][y]=values[k]
             k+=1
-    return(values[0],decodedValuesList)
+    decodedValuesList[0][0]+=previousMeanValue
+    return(decodedValuesList[0][0],decodedValuesList)
         

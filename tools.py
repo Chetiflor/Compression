@@ -43,14 +43,14 @@ def popInt(wrappedStr,sizeOfPop):
 def popPointedInt(wrappedStr,sizeOfPointer):
     return(bin2int(popPointedString(wrappedStr,sizeOfPointer)))
 
-def zigzag(heigth,width):
+def zigzag(height,width):
     indicesList=[]
     descending=False
-    for k in range(heigth+width-1):
+    for k in range(height+width-1):
         indexOnDiagonal = [0,0]
         indexOnDiagonal[descending]=k
         while(indexOnDiagonal[0]>=0 and indexOnDiagonal[1]>=0):
-            if(indexOnDiagonal[0]<heigth and indexOnDiagonal[1]<width):
+            if(indexOnDiagonal[0]<height and indexOnDiagonal[1]<width):
                 indicesList.append(indexOnDiagonal.copy())
             indexOnDiagonal[descending]-=1
             indexOnDiagonal[not(descending)]+=1
@@ -59,10 +59,10 @@ def zigzag(heigth,width):
 
 
 
-def snake(heigth,width):
+def snake(height,width):
     indicesList=[]
     rightToLeft=False
-    for i in range(heigth):
+    for i in range(height):
         for j in range(width):
             indicesList.append([i,j*(1-2*rightToLeft)+rightToLeft*(width-1)])
         rightToLeft=not(rightToLeft)
@@ -71,7 +71,8 @@ def snake(heigth,width):
 def fillWithZeros(wrappedStr,expectedLength):
     lengthDifference=expectedLength-len(wrappedStr[0])
     if(lengthDifference>0):
-        wrappedStr+="0"*lengthDifference
+        wrappedStr[0]+="0"*lengthDifference
+    
 
 
     

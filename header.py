@@ -1,14 +1,14 @@
 import tools
 
-def generateHeader(hBlocks,wBlocks,hPadding,wPadding,delta,dictionary,firstMeanValue,debug=False):
+def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue,debug=False):
     splitter = ""
     if(debug):
         splitter="|"
     header = ""
 
-    header+=tools.int2bin(hBlocks,8)
+    header+=tools.int2bin(numberOfBlocksInHeight,8)
     header+=splitter
-    header+=tools.int2bin(wBlocks,8)
+    header+=tools.int2bin(numberOfBlocksInWidth,8)
     header+=splitter
     header+=tools.int2bin(hPadding,3)
     header+=splitter
@@ -40,8 +40,8 @@ def generateHeader(hBlocks,wBlocks,hPadding,wPadding,delta,dictionary,firstMeanV
 
 
     
-    maxSymbols = max(symbols)
-    sizeOfSymbols=len(tools.int2bin(maxSymbols))
+    maxSymbolsTranslated = max(symbols)-minSymbols
+    sizeOfSymbols=len(tools.int2bin(maxSymbolsTranslated))
     header+=tools.pointedVariable(sizeOfSymbols,4)
     header+=splitter
 
@@ -68,8 +68,8 @@ def generateHeader(hBlocks,wBlocks,hPadding,wPadding,delta,dictionary,firstMeanV
     
 
 def readHeader(wrappedStr):
-    hBlocks=tools.popInt(wrappedStr,8)
-    wBlocks=tools.popInt(wrappedStr,8)
+    numberOfBlocksInHeight=tools.popInt(wrappedStr,8)
+    numberOfBlocksInWidth=tools.popInt(wrappedStr,8)
     hPadding=tools.popInt(wrappedStr,3)
     wPadding=tools.popInt(wrappedStr,3)
     delta=tools.popInt(wrappedStr,4)
@@ -87,7 +87,7 @@ def readHeader(wrappedStr):
         code=tools.popPointedString(wrappedStr,sizeOfSizesOfCode)
         dictionary[code]=symbol
     firstMeanValue=tools.popPointedInt(wrappedStr,4)
-    return(hBlocks,wBlocks,hPadding,wPadding,delta,dictionary,firstMeanValue)
+    return(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue)
 
 
     
