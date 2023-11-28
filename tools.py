@@ -16,7 +16,7 @@ def bin2int(str):
     length = len(str)
     for i in range(length):
         if (str[length-1-i]=="1"):
-            n+=2^i
+            n+=2**i
     return n
 
 
@@ -27,75 +27,21 @@ def pointedVariable(value,sizeOfPointer):
         return(strSize+strVal)
     return(ERROR)
 
-def generateHeader(hBlocks,wBlocks,hPadding,wPadding,delta,dictionary,debug=False):
-    splitter = ""
-    if(debug):
-        splitter="|"
-    header = ""
+def popString(wrappedStr,sizeOfPop):
+    pop=wrappedStr[0][:sizeOfPop]
+    wrappedStr[0]=wrappedStr[0][sizeOfPop:]
+    return(pop)
 
-    header+=int2bin(hBlocks,8)
-    header+=splitter
-    header+=int2bin(wBlocks,8)
-    header+=splitter
-    header+=int2bin(hPadding,3)
-    header+=splitter
-    header+=int2bin(wPadding,3)
-    header+=splitter
+def popPointedString(wrappedStr,sizeOfPointer):
+    ptr=popString(wrappedStr,sizeOfPointer)
+    sizeOfVariable = bin2int(ptr)
+    return(popString(wrappedStr,sizeOfVariable))
 
-    N = len(dictionary)
-    header+=pointedVariable(N,4)
-    header+=splitter
+def popInt(wrappedStr,sizeOfPop):
+    return(bin2int(popString(wrappedStr,sizeOfPop)))
 
-    symbols=[]
-    codes=[]
-    stopCode=""
-    for x,y in dictionary.items():
-        if (y!="stop"):
-            codes.append(x)
-            symbols.append(y)
-        else:
-            stopCode=x
-
-    minSymbols = min(symbols)
-    if minSymbols<0:
-        header+="1"
-        minSymbols*=-1
-    else:
-        header+="0"
-    header+=splitter
-
-    header+=pointedVariable(minSymbols,4)
-    header+=splitter
-
-    for s in symbols:
-        s-=minSymbols
-
-    
-    maxSymbols = max(symbols)
-    sizeOfSymbols=len(int2bin(maxSymbols))
-    header+=pointedVariable(sizeOfSymbols,4)
-    header+=splitter
-
-    maxSizeOfCode=len(max(codes, key=len))
-    s_tmp=pointedVariable(maxSizeOfCode,4)
-    sizeOfSizesOfCode=len(s_tmp)-4
-    header+=s_tmp
-    header+=splitter
-
-    for i in range (N-1):
-        header+=splitter
-        header+=int2bin(symbols[i],sizeOfSymbols)
-        header+=splitter
-        header+=int2bin(len(codes[i]),sizeOfSizesOfCode)
-        header+=splitter
-        header+=codes[i]
-        header+=splitter
-
-    header+=splitter
-    header+=int2bin(len(stopCode),sizeOfSizesOfCode)
-    header+=splitter
-    header+=stopCode
-    return header
-    
+def popPointedInt(wrappedStr,sizeOfPointer):
+    return(bin2int(popPointedString(wrappedStr,sizeOfPointer)))
 
 
+            

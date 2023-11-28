@@ -37,20 +37,37 @@ def generateDictionaryEntriesFromTreeRecursion(objects,currentCode):
     
 def generateDictionary(symbols,probabilities):
     tree = treeSort(symbolToObject(symbols),probabilities)
-    dictionnaryEntries = generateDictionaryEntriesFromTreeRecursion(tree,"")
+    dictionaryEntries = generateDictionaryEntriesFromTreeRecursion(tree,"")
     dictionary = {}
-    for i in range(len(dictionnaryEntries)):
-        dictionary[dictionnaryEntries[i][1]]=dictionnaryEntries[i][0]
+    for i in range(len(dictionaryEntries)):
+        dictionary[dictionaryEntries[i][1]]=dictionaryEntries[i][0]
     return(dictionary)
 
+def encode(listOfSymbols,dictionary):
+    codeStr=""
+    for i in range(len(listOfSymbols)):
+        symbol=listOfSymbols[i]
+        if symbol in dictionary.values():
+            codeStr+=list(dictionary.keys())[list(dictionary.values()).index(symbol)]
+        else:
+            codeStr+=tools.ERROR
+    return codeStr
 
-symbols = [1,5,6,3,2,4,"stop"]
-probabilities = [0.4,0.3,0.1,0.1,0.06,0.03,0]
-tree = constTreeSort(symbolToObject(symbols),probabilities)
-dico = generateDictionary(symbols,probabilities)
+def decode(wrappedStr,dictionary,numberOfSymbols):
+    decodedList=[]
+    maxSizeOfCode=len(max(dictionary.keys(), key=len))
+    for i in range(numberOfSymbols):
+        if (len(wrappedStr[0])==0):
+            return([tools.ERROR])
+        k=1
+        while (k<=maxSizeOfCode and not(wrappedStr[0][:k] in dictionary)):
+            k+=1
+        if k>maxSizeOfCode:
+            decodedList.append(tools.ERROR)
+        else:
+            key=tools.popString(wrappedStr,k)
+            decodedList.append(dictionary[key])
+    return decodedList
 
-print(dico)
 
-header = tools.generateHeader(64,64,0,0,2,dico,True)
 
-print(header)
