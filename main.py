@@ -30,7 +30,7 @@ im = cv2.imread("images/01.png",0)
 
 height, width = im.shape[:2]
 
-delta=0.1
+delta=1.2
 
 encoded=compressor.encode(im,delta)
 encodedDebug=compressor.encode(im,delta)
@@ -51,8 +51,8 @@ if(True):
 imp1=im+1
 
 transformedImage = compressor.decode(encodedImage)
-err = (np.square(np.subtract(im.astype("float"), imp1.astype("float")))).mean()/(width*height)
+err = np.sqrt(np.mean((np.square(cv2.subtract(im, transformedImage)))))
 print(err)
-cv2.imshow("compression",transformedImage)
+cv2.imshow("compression",cv2.subtract(im, transformedImage))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
