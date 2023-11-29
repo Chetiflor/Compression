@@ -10,7 +10,7 @@ def encodePositions(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
     while(wrappedStr[0]!=""):
         k=1
         bitValue=wrappedStr[0][0]
-        while(k<len(wrappedStr[0]) and wrappedStr[0][k+1]==bitValue):
+        while(k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue):
             k+=1
         if(cutEndZeros and k==len(wrappedStr[0]) and bitValue=="0"):
             break
@@ -147,12 +147,12 @@ def decodeRangeFancy(wrappedEncodedStr,sizeOfQuantifier,sizeOfMinRange):
             decodedStr+=rangeSize*bitValue
     return(decodedStr)
 
-sizeOfQuantifier=3
-sizeOfMinRange=8
-myStr=["1111000000000000010111110111111111100000000000000"]
-myEncodedStr=[encodeRangeFancy(myStr.copy(),sizeOfQuantifier,sizeOfMinRange)]
-myEncodedStrDebug=[encodeRangeFancy(myStr.copy(),sizeOfQuantifier,debug=True)]
-print(myEncodedStrDebug[0])
-print(myStr[0])
+# sizeOfQuantifier=3
+# sizeOfMinRange=8
+# myStr=["1111000000000000010111110111111111100000000000000"]
+# myEncodedStr=[encodeRangeFancy(myStr.copy(),sizeOfQuantifier,sizeOfMinRange)]
+# myEncodedStrDebug=[encodeRangeFancy(myStr.copy(),sizeOfQuantifier,debug=True)]
+# print(myEncodedStrDebug[0])
+# print(myStr[0])
 
-print(decodeRangeFancy(myEncodedStr,sizeOfQuantifier,sizeOfMinRange))
+# print(decodeRangeFancy(myEncodedStr,sizeOfQuantifier,sizeOfMinRange))
