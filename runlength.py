@@ -10,7 +10,7 @@ def encodePositions(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
     while(wrappedStr[0]!=""):
         k=1
         bitValue=wrappedStr[0][0]
-        while(k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue):
+        while(k<len(wrappedStr[0]) and wrappedStr[0][k+1]==bitValue):
             k+=1
         if(cutEndZeros and k==len(wrappedStr[0]) and bitValue=="0"):
             break
@@ -23,31 +23,31 @@ def encodePositions(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
             k-=lengthToPop
     return(encodedStr)
 
-def encodeRange(wrappedStr,sizeOfQuantifier,debug=False):
+def encodePosTMP(wrappedStr,sizeOfQuantifier,debug=False):
     splitter = ""
     if(debug):
         splitter="|"
 
     encodedStr=""
-    maxRunLength=2**(2**sizeOfQuantifier)
+    maxRunLength=2**(2**sizeOfQuantifier)-1
     while(wrappedStr[0]!=""):
         k=1
         bitValue=wrappedStr[0][0]
         while(k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue):
             k+=1
         lengthToPop=min(k,maxRunLength)
-        binaryLength = tools.pointedVariable(lengthToPop,sizeOfQuantifier,1)
+        binaryLength = tools.pointedVariable(lengthToPop,sizeOfQuantifier,offset=1)
         encodedStr+=binaryLength
         encodedStr+=splitter
         tools.popString(wrappedStr,lengthToPop)
         k-=lengthToPop
         while(k>0):
-            binaryLength = tools.pointedVariable(0,sizeOfQuantifier,1)
+            binaryLength = tools.pointedVariable(0,sizeOfQuantifier,offset=1)
             encodedStr+=binaryLength
             encodedStr+=splitter
             tools.popString(wrappedStr,lengthToPop)
             lengthToPop=min(k,maxRunLength)
-            binaryLength = tools.pointedVariable(lengthToPop,sizeOfQuantifier,1)
+            binaryLength = tools.pointedVariable(lengthToPop,sizeOfQuantifier,offset=1)
             encodedStr+=binaryLength
             encodedStr+=splitter
             tools.popString(wrappedStr,lengthToPop)
@@ -67,7 +67,7 @@ def decodePositions(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes):
         decodedStr+=strLength*bitValue
     return(decodedStr)
 
-def decodeRange(wrappedEncodedStr,sizeOfQuantifier):
+def decodePosTMP(wrappedEncodedStr,sizeOfQuantifier):
     decodedStr=""
     bitValue="1"
     while(wrappedEncodedStr[0]!=""):
@@ -80,9 +80,9 @@ def decodeRange(wrappedEncodedStr,sizeOfQuantifier):
 
     return(decodedStr)
 
-sizeOfQuantifier=3
+sizeOfQuantifier=1
 myStr=["1111000000000000010111110111111111100000000000000"]
-myEncodedStr=[encodeRange(myStr,sizeOfQuantifier)]
+myEncodedStr=[encodePosTMP(myStr,sizeOfQuantifier)]
 print(myEncodedStr[0])
 
-print(decodeRange(myEncodedStr,sizeOfQuantifier))
+print(decodePosTMP(myEncodedStr,sizeOfQuantifier))
