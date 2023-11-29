@@ -32,14 +32,20 @@ def pointedVariable(value,sizeOfPointer,offset=0):
         return(strSize+strVal)
     return(ERROR)
 
+def pointedString(str,sizeOfPointer):
+    strSize=int2bin(len(str),sizeOfPointer)
+    if (strSize!=ERROR):
+        return(strSize+str)
+    return(ERROR)
+
 def popString(wrappedStr,sizeOfPop):
     pop=wrappedStr[0][:sizeOfPop]
     wrappedStr[0]=wrappedStr[0][sizeOfPop:]
     return(pop)
 
 def popPointedString(wrappedStr,sizeOfPointer,offset=0):
-    ptr=popString(wrappedStr,sizeOfPointer)
-    sizeOfVariable = bin2int(ptr)+offset
+    ptr=popInt(wrappedStr,sizeOfPointer)
+    sizeOfVariable = ptr+offset
     return(popString(wrappedStr,sizeOfVariable))
 
 def popInt(wrappedStr,sizeOfPop):
