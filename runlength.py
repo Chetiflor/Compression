@@ -1,6 +1,6 @@
 import tools
 
-def encode(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
+def encodePositions(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
     splitter = ""
     if(debug):
         splitter="|"
@@ -23,8 +23,39 @@ def encode(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
             k-=lengthToPop
     return(encodedStr)
 
+def encodeRange(wrappedStr,sizeOfQuantifier,debug=False):
+    splitter = ""
+    if(debug):
+        splitter="|"
 
-def decode(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes):
+    encodedStr=""
+    maxRunLength=2**(2**sizeOfQuantifier)
+    while(wrappedStr[0]!=""):
+        k=1
+        bitValue=wrappedStr[0][0]
+        while(k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue):
+            k+=1
+        lengthToPop=min(k,maxRunLength)
+        binaryLength = tools.pointedVariable(lengthToPop,sizeOfQuantifier,1)
+        encodedStr+=binaryLength
+        encodedStr+=splitter
+        tools.popString(wrappedStr,lengthToPop)
+        k-=lengthToPop
+        while(k>0):
+            binaryLength = tools.pointedVariable(0,sizeOfQuantifier,1)
+            encodedStr+=binaryLength
+            encodedStr+=splitter
+            tools.popString(wrappedStr,lengthToPop)
+            lengthToPop=min(k,maxRunLength)
+            binaryLength = tools.pointedVariable(lengthToPop,sizeOfQuantifier,1)
+            encodedStr+=binaryLength
+            encodedStr+=splitter
+            tools.popString(wrappedStr,lengthToPop)
+            k-=lengthToPop
+    return(encodedStr)
+
+
+def decodePositions(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes):
     decodedStr=""
     onesCount=0
     while(wrappedEncodedStr[0]!="" and onesCount<expectedNumberOfOnes):
@@ -36,7 +67,22 @@ def decode(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes):
         decodedStr+=strLength*bitValue
     return(decodedStr)
 
-# myStr="11110001011111011111100000000000"
-# myEncodedStr=encode([myStr],3)
+def decodeRange(wrappedEncodedStr,sizeOfQuantifier):
+    decodedStr=""
+    bitValue="1"
+    while(wrappedEncodedStr[0]!=""):
+        strLength = tools.popPointedInt(wrappedEncodedStr,sizeOfQuantifier,1)
+        decodedStr+=strLength*bitValue
+        if bitValue=="1":
+            bitValue="0"
+        else:
+            bitValue="1"
 
-# print(decode([myEncodedStr],3,16))
+    return(decodedStr)
+
+sizeOfQuantifier=3
+myStr=["1111000000000000010111110111111111100000000000000"]
+myEncodedStr=[encodeRange(myStr,sizeOfQuantifier)]
+print(myEncodedStr[0])
+
+print(decodeRange(myEncodedStr,sizeOfQuantifier))

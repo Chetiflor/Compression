@@ -26,7 +26,7 @@ def bin2int(str):
 
 
 def pointedVariable(value,sizeOfPointer,offset=0):
-    strVal=int2bin(value,offset=3)
+    strVal=int2bin(value,offset=offset)
     strSize=int2bin(max(len(strVal)-offset,0),sizeOfPointer)
     if (strSize!=ERROR):
         return(strSize+strVal)
@@ -37,16 +37,16 @@ def popString(wrappedStr,sizeOfPop):
     wrappedStr[0]=wrappedStr[0][sizeOfPop:]
     return(pop)
 
-def popPointedString(wrappedStr,sizeOfPointer):
+def popPointedString(wrappedStr,sizeOfPointer,offset=0):
     ptr=popString(wrappedStr,sizeOfPointer)
-    sizeOfVariable = bin2int(ptr)
+    sizeOfVariable = bin2int(ptr)+offset
     return(popString(wrappedStr,sizeOfVariable))
 
 def popInt(wrappedStr,sizeOfPop):
     return(bin2int(popString(wrappedStr,sizeOfPop)))
 
-def popPointedInt(wrappedStr,sizeOfPointer):
-    return(bin2int(popPointedString(wrappedStr,sizeOfPointer)))
+def popPointedInt(wrappedStr,sizeOfPointer,offset=0):
+    return(bin2int(popPointedString(wrappedStr,sizeOfPointer,offset)))
 
 def zigzag(height,width):
     indicesList=[]

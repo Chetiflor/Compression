@@ -27,7 +27,7 @@ def encode(dct88Block,dictionary):
             valuesToEncode.append(currentValue)
     encodedBlock+=generateStartingHuffmanMarker(len(valuesToEncode))
     encodedBlock+=huffman.encode(valuesToEncode,dictionary)
-    encodedBlock+=runlength.encode([runlengthToEncode],sizeOfRunlengthQuantifier)
+    encodedBlock+=runlength.encodePositions([runlengthToEncode],sizeOfRunlengthQuantifier)
 
     return encodedBlock
 
@@ -35,7 +35,7 @@ def decode(wrappedStr,previousMeanValue,dictionary):
     decodedValuesList=[[0 for i in range(8)] for j in range(8)]
     numberOfValues=readNumberOfValuesFromHuffmanMarker(wrappedStr)
     values=huffman.decode(wrappedStr,dictionary,numberOfValues)
-    valuesPositionsMask=[runlength.decode(wrappedStr,sizeOfRunlengthQuantifier,numberOfValues)]
+    valuesPositionsMask=[runlength.decodePositions(wrappedStr,sizeOfRunlengthQuantifier,numberOfValues)]
     tools.fillWithZeros(valuesPositionsMask,64)
     indicesRoute=tools.zigzag(8,8)
     k=0
