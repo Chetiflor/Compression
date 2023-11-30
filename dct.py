@@ -13,10 +13,10 @@ Z=np.array([[16,11,10,16,24,40,51,61],
 ])
 
 def dct(block,delta):
-    return np.trunc(np.divide(cv2.dct((block)),1.0*delta*Z))
+    return np.trunc(np.divide(cv2.dct((block)),1.0*np.ceil(delta*Z)))
 
 def idct(block,delta):
-    idctValues = cv2.idct(np.multiply(block,1.0*delta*Z))
+    idctValues = cv2.idct(np.multiply(block,1.0*np.ceil(delta*Z)))
     idctValues[idctValues<0]=0
     return(idctValues)
 

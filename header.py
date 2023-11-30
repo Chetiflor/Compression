@@ -1,9 +1,8 @@
 import tools
 import math 
 
-deltaRangeSize=8
 
-def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,deltaScaled,dictionary,firstMeanValue,debug=False):
+def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,deltaScaled,sizeOfQuantifier,dictionary,firstMeanValue,debug=False):
     splitter = ""
     if(debug):
         splitter="|"
@@ -17,11 +16,13 @@ def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPaddin
     header+=splitter
     header+=tools.int2bin(wPadding,3)
     header+=splitter  
-    header+=tools.int2bin(deltaScaled,deltaRangeSize)
+    header+=tools.int2bin(deltaScaled,13)
+    header+=splitter
+    header+=tools.int2bin(sizeOfQuantifier-1,2)
     header+=splitter
 
     N = len(dictionary)
-    header+=tools.pointedVariable(N,4)
+    header+=tools.pointedInt(N,4)
     header+=splitter
 
     symbols=[]
@@ -39,17 +40,17 @@ def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPaddin
         header+="0"
     header+=splitter
 
-    header+=tools.pointedVariable(abs(minSymbols),4)
+    header+=tools.pointedInt(abs(minSymbols),4)
     header+=splitter
 
 
     
     sizeOfSymbols=len(tools.int2bin(maxSymbolsTranslated))
-    header+=tools.pointedVariable(sizeOfSymbols,4)
+    header+=tools.pointedInt(sizeOfSymbols,4)
     header+=splitter
 
     maxSizeOfCode=len(max(codes, key=len))
-    s_tmp=tools.pointedVariable(maxSizeOfCode,4)
+    s_tmp=tools.pointedInt(maxSizeOfCode,4)
     sizeOfSizesOfCode=len(s_tmp)-4
     header+=s_tmp
     header+=splitter
@@ -64,7 +65,7 @@ def generateHeader(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPaddin
         header+=splitter
 
     header+=splitter    
-    header+=tools.pointedVariable(firstMeanValue,4)
+    header+=tools.pointedInt(firstMeanValue,4)
     header+=splitter
 
     return header
@@ -75,8 +76,9 @@ def readHeader(wrappedStr):
     numberOfBlocksInWidth=tools.popInt(wrappedStr,8)
     hPadding=tools.popInt(wrappedStr,3)
     wPadding=tools.popInt(wrappedStr,3)
-    deltaScaled=tools.popInt(wrappedStr,deltaRangeSize)
-    delta = 1+(deltaScaled-2**(deltaRangeSize-1))/deltaRangeSize
+    deltaScaled=tools.popInt(wrappedStr,13)
+    delta = deltaScaled/(2**(7))
+    sizeOfQuantifier=tools.popInt(wrappedStr,2)+1
     N=tools.popPointedInt(wrappedStr,4)
     signOfMin=tools.popInt(wrappedStr,1)
     minSymbols=tools.popPointedInt(wrappedStr,4)
@@ -91,7 +93,7 @@ def readHeader(wrappedStr):
         code=tools.popPointedString(wrappedStr,sizeOfSizesOfCode)
         dictionary[code]=symbol
     firstMeanValue=tools.popPointedInt(wrappedStr,4)
-    return(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,dictionary,firstMeanValue)
+    return(numberOfBlocksInHeight,numberOfBlocksInWidth,hPadding,wPadding,delta,sizeOfQuantifier,dictionary,firstMeanValue)
 
 
     

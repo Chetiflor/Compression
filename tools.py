@@ -2,7 +2,7 @@ import math
 
 ERROR = "__ERROR__"
 
-def int2bin(n,length=0,offset=0):
+def int2bin(n,length=0,minimalLength=0):
     s=""
     while (n>0):
         s=str(n%2)+s
@@ -11,7 +11,7 @@ def int2bin(n,length=0,offset=0):
         return ERROR
     while (len(s)<length):
         s="0"+s
-    while (len(s)<offset):
+    while (len(s)<minimalLength):
         s="0"+s
 
     return s
@@ -25,8 +25,8 @@ def bin2int(str):
     return n
 
 
-def pointedVariable(value,sizeOfPointer,offset=0):
-    strVal=int2bin(value,offset=offset)
+def pointedInt(value,sizeOfPointer,offset=0):
+    strVal=int2bin(value,minimalLength=offset)
     strSize=int2bin(max(len(strVal)-offset,0),sizeOfPointer)
     if (strSize!=ERROR):
         return(strSize+strVal)
