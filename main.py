@@ -28,7 +28,7 @@ kernelSize=3
 
 compressionParameter=1.11
 sizeOfQuantifier=3
-sizeOfMinRange=3
+sizeOfMinRange=27
 
 ###########################
 ### Encodage - Décodage ###
