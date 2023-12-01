@@ -18,6 +18,7 @@ toFile=False
 printReconstruction=True
 printError=True
 gaussianBlur=True
+kernelSize=3
 
 #############################
 ### Paramètres d'encodage ###
@@ -25,9 +26,9 @@ gaussianBlur=True
 # Le paramètre de compression n'est pas directement le taux,
 # il permet seulement de le moduler mais n'a pas de signification
 
-compressionParameter=1.118
+compressionParameter=1.11
 sizeOfQuantifier=3
-sizeOfMinRange=27
+sizeOfMinRange=3
 
 ###########################
 ### Encodage - Décodage ###
@@ -49,7 +50,6 @@ print("Taux de compression: ",compressionFactor)
 print("Erreur moyenne: ",meanSquareErrorWithoutGaussianBlur)
 
 if gaussianBlur:
-    kernelSize=3
     kernel = np.ones((kernelSize,kernelSize),np.float32)/(kernelSize**2)
     transformedImage = cv2.GaussianBlur(transformedImage,(kernelSize,kernelSize),1)
     meanSquareErrorWithGaussianBlur = np.sqrt(np.mean((np.square(cv2.subtract(im, transformedImage)))))
@@ -69,7 +69,7 @@ if(toFile):
 if printError:
     cv2.imshow("Erreur",cv2.subtract(im, transformedImage))
 if printReconstruction:
-    cv2.imshow("Image après compression",transformedImage)
+    cv2.imshow("Image apres compression",transformedImage)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()

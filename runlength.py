@@ -1,5 +1,7 @@
 import tools
 
+
+
 def encodePositions(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
     splitter = ""
     if(debug):
@@ -23,37 +25,78 @@ def encodePositions(wrappedStr,sizeOfQuantifier,cutEndZeros=True,debug=False):
             k-=lengthToPop
     return(encodedStr)
 
-def encodePositionsQuantifier(wrappedStr,sizeOfQuantifier,cutEndZeros=False,debug=False):
+def classicalRunLengthEncode(wrappedStr,sizeOfQuantifier,debug=False):    
     splitter = ""
     if(debug):
         splitter="|"
 
     encodedStr=""
-    maxRunLength=2**(2**sizeOfQuantifier)-1
-    while(wrappedStr[0]!=""):
-        k=1
-        bitValue=wrappedStr[0][0]
-        while(k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue):
+    bitValue="1"
+    maxRunLength=2**sizeOfQuantifier-1
+    while wrappedStr[0]!="":
+        k=0
+        while k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue and k<maxRunLength:
             k+=1
-        if(cutEndZeros and k==len(wrappedStr[0]) and bitValue=="0"):
-            break
-        lengthToPop=min(k,maxRunLength)
-        binaryLength = tools.pointedInt(lengthToPop,sizeOfQuantifier,offset=1)
-        encodedStr+=binaryLength
+        
+        tools.popString(wrappedStr,k)
+        encodedStr+=tools.int2bin(k,sizeOfQuantifier)
         encodedStr+=splitter
-        tools.popString(wrappedStr,lengthToPop)
-        k-=lengthToPop
-        while(k>0):
-            binaryLength = tools.pointedInt(0,sizeOfQuantifier,offset=1)
-            encodedStr+=binaryLength
-            encodedStr+=splitter
-            lengthToPop=min(k,maxRunLength)
-            binaryLength = tools.pointedInt(lengthToPop,sizeOfQuantifier,offset=1)
-            encodedStr+=binaryLength
-            encodedStr+=splitter
-            tools.popString(wrappedStr,lengthToPop)
-            k-=lengthToPop
-    return(encodedStr)
+        if bitValue=="1":
+            bitValue="0"
+        else:
+            bitValue="1"
+    return encodedStr
+
+def classicalRunLengthDecode(wrappedStr,sizeOfQuantifier):
+    decodedStr=""
+    bitValue="1"
+    while wrappedStr[0]!="":
+        k=tools.popInt(wrappedStr,sizeOfQuantifier)
+        decodedStr+=k*bitValue
+        if bitValue=="1":
+            bitValue="0"
+        else:
+            bitValue="1"
+    return decodedStr
+
+
+
+
+        
+
+# non fonctionnel
+
+# def encodePositionsQuantifier(wrappedStr,sizeOfQuantifier,cutEndZeros=False,debug=False):
+#     splitter = ""
+#     if(debug):
+#         splitter="|"
+
+#     encodedStr=""
+#     maxRunLength=2**(2**sizeOfQuantifier)-1
+#     while(wrappedStr[0]!=""):
+#         k=1
+#         bitValue=wrappedStr[0][0]
+#         while(k<len(wrappedStr[0]) and wrappedStr[0][k]==bitValue):
+#             k+=1
+#         if(cutEndZeros and k==len(wrappedStr[0]) and bitValue=="0"):
+#             break
+#         lengthToPop=min(k,maxRunLength)
+#         binaryLength = tools.pointedInt(lengthToPop,sizeOfQuantifier,offset=1)
+#         encodedStr+=binaryLength
+#         encodedStr+=splitter
+#         tools.popString(wrappedStr,lengthToPop)
+#         k-=lengthToPop
+#         while(k>0):
+#             binaryLength = tools.pointedInt(0,sizeOfQuantifier,offset=1)
+#             encodedStr+=binaryLength
+#             encodedStr+=splitter
+#             lengthToPop=min(k,maxRunLength)
+#             binaryLength = tools.pointedInt(lengthToPop,sizeOfQuantifier,offset=1)
+#             encodedStr+=binaryLength
+#             encodedStr+=splitter
+#             tools.popString(wrappedStr,lengthToPop)
+#             k-=lengthToPop
+#     return(encodedStr)
 
 def checkIfConstantRange(wrappedStr,startingPosition,rangeToSearch):
 
@@ -136,21 +179,23 @@ def decodePositions(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes):
         decodedStr+=strLength*bitValue
     return(decodedStr)
 
-def decodePosistionsQuantifier(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes=0,countOnes=False):
-    decodedStr=""
-    bitValue="1"
-    onesCount=0
-    while(wrappedEncodedStr[0]!="" and (not(countOnes) or (countOnes and onesCount<expectedNumberOfOnes))):
-        strLength = tools.popPointedInt(wrappedEncodedStr,sizeOfQuantifier,1)
-        if(bitValue=="1"):
-            onesCount+=strLength
-        decodedStr+=strLength*bitValue
-        if bitValue=="1":
-            bitValue="0"
-        else:
-            bitValue="1"
+# non fonctionnel
 
-    return(decodedStr)
+# def decodePosistionsQuantifier(wrappedEncodedStr,sizeOfQuantifier,expectedNumberOfOnes=0,countOnes=False):
+#     decodedStr=""
+#     bitValue="1"
+#     onesCount=0
+#     while(wrappedEncodedStr[0]!="" and (not(countOnes) or (countOnes and onesCount<expectedNumberOfOnes))):
+#         strLength = tools.popPointedInt(wrappedEncodedStr,sizeOfQuantifier,1)
+#         if(bitValue=="1"):
+#             onesCount+=strLength
+#         decodedStr+=strLength*bitValue
+#         if bitValue=="1":
+#             bitValue="0"
+#         else:
+#             bitValue="1"
+
+#     return(decodedStr)
 
 def decodeRangeFancy(wrappedEncodedStr,sizeOfQuantifier):
     decodedStr=""
@@ -174,4 +219,8 @@ def decodeRangeFancy(wrappedEncodedStr,sizeOfQuantifier):
 # print(myEncodedStrDebug[0])
 # print(myStr[0])
 
+# tmp=[classicalRunLengthEncode(myStr.copy(),6)]
+
+# print(myStr[0])
+# print(classicalRunLengthDecode(tmp,6))
 # print(decodeRangeFancy(myEncodedStr,sizeOfQuantifier))

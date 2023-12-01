@@ -28,7 +28,6 @@ def encode(dct88Block,dictionary):
     encodedBlock+=generateStartingHuffmanMarker(len(valuesToEncode))
     encodedBlock+=huffman.encode(valuesToEncode,dictionary)
     encodedBlock+=runlength.encodePositions([runlengthToEncode],sizeOfRunlengthQuantifier) 
-    # encodedBlock+=runlength.encodePositions([runlengthToEncode],sizeOfRunlengthQuantifier)
 
     return encodedBlock
 
